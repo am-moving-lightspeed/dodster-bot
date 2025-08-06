@@ -1,2 +1,2 @@
-rootProject.name = "moses-bot"
+rootProject.name = "dodster-bot"
 
