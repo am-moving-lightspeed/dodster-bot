@@ -4,13 +4,15 @@ import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.UpdateProcesso
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.HelpCommandProcessor
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.SettingsCommandProcessor
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.StartCommandProcessor
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.state.StateManager
 import com.github.am_moving_lightspeed.tg.bot.dodster.config.BotProperties
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.multibindings.Multibinder.newSetBinder
+import jakarta.inject.Singleton
 import java.util.Properties
+import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
-import org.telegram.telegrambots.meta.generics.LongPollingBot
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
 class BotModule: AbstractModule() {
@@ -24,11 +26,17 @@ class BotModule: AbstractModule() {
     }
 
     @Provides
-    fun bot(
-        processors: Set<UpdateProcessor>,
-        @BotProperties properties: Properties
-    ): LongPollingBot = Bot(processors, properties)
+    @Singleton
+    fun stateManager(): StateManager = StateManager()
 
     @Provides
+    @Singleton
+    fun dodsterBot(
+        processors: Set<UpdateProcessor>,
+        @BotProperties properties: Properties
+    ): TelegramLongPollingBot = DodsterBot(processors, properties)
+
+    @Provides
+    @Singleton
     fun telegramBotsApi(): TelegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java)
 }
