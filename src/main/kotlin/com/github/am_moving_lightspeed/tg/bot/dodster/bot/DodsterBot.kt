@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 
-class Bot(
+class DodsterBot(
     private val processors: Set<UpdateProcessor>,
     private val properties: Properties
 ): TelegramLongPollingBot(
