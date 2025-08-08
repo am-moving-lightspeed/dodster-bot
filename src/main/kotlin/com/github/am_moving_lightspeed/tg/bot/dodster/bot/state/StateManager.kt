@@ -1,5 +1,10 @@
 package com.github.am_moving_lightspeed.tg.bot.dodster.bot.state
 
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.UpdateProcessorChain
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.SettingsCommandProcessor
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.StartCommandProcessor
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.state.State.Id.SETTINGS
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.state.State.Id.START
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.letOrThrow
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.runOrThrow
 import java.util.Properties
@@ -15,13 +20,14 @@ class StateManager(properties: Properties) {
         usersStates.remove(update.message.chatId)
     }
 
-    fun updateState(update: Update, api: DefaultAbsSender) {
+    fun updateState(updatingProcessor: UpdateProcessorChain, update: Update, api: DefaultAbsSender) {
         val chatId = resolveChatId(update)
         if (!usersStates.containsKey(chatId)) {
-            initUserState(chatId)
+            initUserState(updatingProcessor, chatId)
         }
         usersStates[chatId].letOrThrow {
             determineNextState(update, chatId, it)
+            it.onStateLeaving(update, api)
         }
         usersStates[chatId].runOrThrow {
             onStateEntered(update, api)
@@ -36,8 +42,13 @@ class StateManager(properties: Properties) {
         }
     }
 
-    private fun initUserState(chatId: Long) {
-        usersStates[chatId] = InitialState(context)
+    private fun initUserState(updatingProcessor: UpdateProcessorChain, chatId: Long) {
+        val nextStateId = when (updatingProcessor) {
+            is SettingsCommandProcessor -> SETTINGS
+            is StartCommandProcessor -> START
+            else -> throw IllegalStateException("Initial state couldn't be resolved")
+        }
+        usersStates[chatId] = InitialState(nextStateId, context)
     }
 
     private fun determineNextState(update: Update, chatId: Long, currentState: State) {

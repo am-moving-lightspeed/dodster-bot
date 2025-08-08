@@ -14,8 +14,12 @@ val BOT_COMMANDS_NAMES = listOf(
 )
 
 // Bot state options
+const val ADD_ACCOUNT_OPT = "add-account"
+const val HELP_OPT = "help"
 const val MEDIA_MGMT_OPT = "media-management"
 const val MONITOR_CHAT_OPT = "monitor-chat"
+const val REMOVE_OPT = "remove-account"
+const val RE_AUTH_OPT = "re-auth"
 
 // Common
 const val APPLICATION_PROPERTIES_FILE = "application.properties"

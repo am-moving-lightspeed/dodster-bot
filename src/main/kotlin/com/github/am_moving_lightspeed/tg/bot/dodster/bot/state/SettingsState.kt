@@ -1,9 +1,11 @@
 package com.github.am_moving_lightspeed.tg.bot.dodster.bot.state
 
-import com.github.am_moving_lightspeed.tg.bot.dodster.bot.state.State.Id.START
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.state.State.Id.SETTINGS
+import com.github.am_moving_lightspeed.tg.bot.dodster.util.ADD_ACCOUNT_OPT
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.BOT_STATE_MESSAGE_PREFIX
-import com.github.am_moving_lightspeed.tg.bot.dodster.util.MEDIA_MGMT_OPT
-import com.github.am_moving_lightspeed.tg.bot.dodster.util.MONITOR_CHAT_OPT
+import com.github.am_moving_lightspeed.tg.bot.dodster.util.HELP_OPT
+import com.github.am_moving_lightspeed.tg.bot.dodster.util.REMOVE_OPT
+import com.github.am_moving_lightspeed.tg.bot.dodster.util.RE_AUTH_OPT
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.SendMessageBuilder
 import java.util.Optional
 import java.util.Optional.empty
@@ -15,31 +17,46 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 /**
  * Entered upon initiating a dialog with the bot.
  */
-class StartState(context: State.Context): AbstractState(context) {
+class SettingsState(context: State.Context): AbstractState(context) {
 
-    override val id: State.Id = START
+    override val id: State.Id = SETTINGS
     override val previous: Optional<State> = empty()
 
-    private val stateMessage: String
+    private val settingsMessage: String
         get() = context.properties.getProperty("$BOT_STATE_MESSAGE_PREFIX.${id.value}")
 
-    private val mediaManagementOption: String
-        get() = getStateOptionText(MEDIA_MGMT_OPT)
+    private val addAccountOption: String
+        get() = getStateOptionText(ADD_ACCOUNT_OPT)
 
-    private val monitorChatOption: String
-        get() = getStateOptionText(MONITOR_CHAT_OPT)
+    private val helpOption: String
+        get() = getStateOptionText(HELP_OPT)
 
-    private val mediaManagementInlineKbBtn: InlineKeyboardButton
-        get() = createInlineKbButton(mediaManagementOption, MEDIA_MGMT_OPT)
+    private val removeOption: String
+        get() = getStateOptionText(REMOVE_OPT)
 
-    private val monitorChatInlineKbBtn: InlineKeyboardButton
-        get() = createInlineKbButton(monitorChatOption, MONITOR_CHAT_OPT)
+    private val reAuthOption: String
+        get() = getStateOptionText(RE_AUTH_OPT)
+
+    private val addAccountInlineKbBtn: InlineKeyboardButton
+        get() = createInlineKbButton(addAccountOption, ADD_ACCOUNT_OPT)
+
+    private val helpInlineKbBtn: InlineKeyboardButton
+        get() = createInlineKbButton(helpOption, HELP_OPT)
+
+    private val removeInlineKbBtn: InlineKeyboardButton
+        get() = createInlineKbButton(removeOption, REMOVE_OPT)
+
+    private val reAuthInlineKbBtn: InlineKeyboardButton
+        get() = createInlineKbButton(reAuthOption, RE_AUTH_OPT)
 
     override fun onStateEntered(update: Update, api: DefaultAbsSender) {
+        val firstKbRow = listOf(addAccountInlineKbBtn, removeInlineKbBtn, helpInlineKbBtn)
+        // TODO list accounts one row per each that require re-authorization
+        // TODO check for "Removal" relevance
         val keyboard = InlineKeyboardMarkup.builder()
-            .keyboardRow(listOf(mediaManagementInlineKbBtn, monitorChatInlineKbBtn))
+            .keyboardRow(firstKbRow)
             .build()
-        val reply = SendMessageBuilder(update.message.chatId, stateMessage)
+        val reply = SendMessageBuilder(update.message.chatId, settingsMessage)
             .replyMarkup(keyboard)
             .build()
         api.execute(reply)

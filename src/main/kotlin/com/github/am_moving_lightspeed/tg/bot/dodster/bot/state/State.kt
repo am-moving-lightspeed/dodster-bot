@@ -31,6 +31,7 @@ interface State {
         val type: Class<out State>,
         vararg val options: Id
     ) {
+        SETTINGS("settings", SettingsState::class.java),
         START("start", StartState::class.java),
         INITIAL("initial", InitialState::class.java, START)
     }
