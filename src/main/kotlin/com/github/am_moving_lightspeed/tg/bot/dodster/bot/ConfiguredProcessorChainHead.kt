@@ -1,4 +1,4 @@
-package com.github.am_moving_lightspeed.tg.bot.dodster.config
+package com.github.am_moving_lightspeed.tg.bot.dodster.bot
 
 import jakarta.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.RUNTIME
@@ -9,4 +9,4 @@ import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 @Retention(RUNTIME)
 @Target(FIELD, FUNCTION, VALUE_PARAMETER)
 @Qualifier
-annotation class BotProperties
+annotation class ConfiguredProcessorChainHead

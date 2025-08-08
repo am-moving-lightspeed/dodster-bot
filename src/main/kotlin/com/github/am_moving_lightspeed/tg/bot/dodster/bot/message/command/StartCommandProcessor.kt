@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.api.objects.Update
 
 class StartCommandProcessor
+//
 @Inject
 constructor(private val stateManager: StateManager): CommandProcessor() {
 

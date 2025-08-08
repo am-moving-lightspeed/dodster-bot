@@ -1,6 +1,6 @@
 package com.github.am_moving_lightspeed.tg.bot.dodster.bot
 
-import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.UpdateProcessor
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.UpdateProcessorChain
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.BOT_CMD_DESCRIPTION_PREFIX
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.BOT_COMMANDS_NAMES
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.BOT_NAME_PROP
@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 
 class DodsterBot(
-    private val processors: Set<UpdateProcessor>,
+    private val processorsChain: UpdateProcessorChain,
     private val properties: Properties
 ): TelegramLongPollingBot(
     properties.getProperty(BOT_TOKEN_PROP)
@@ -22,9 +22,7 @@ class DodsterBot(
 
     override fun onUpdateReceived(update: Update?) {
         if (update != null) {
-            processors
-                .find { it.canProcess(update) }
-                ?.process(update, this)
+            processorsChain.processInChain(update, this)
         }
     }
 
