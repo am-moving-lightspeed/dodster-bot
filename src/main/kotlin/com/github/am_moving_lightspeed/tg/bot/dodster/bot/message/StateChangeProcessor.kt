@@ -16,6 +16,6 @@ constructor(private val stateManager: StateManager): NextProcessorAwareUpdatePro
     }
 
     override fun process(update: Update, api: DefaultAbsSender) {
-        stateManager.updateState(update, api)
+        stateManager.updateState(this, update, api)
     }
 }
