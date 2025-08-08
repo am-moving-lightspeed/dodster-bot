@@ -1,6 +1,7 @@
 package com.github.am_moving_lightspeed.tg.bot.dodster.bot
 
-import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.UpdateProcessor
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.StateChangeProcessor
+import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.UpdateProcessorChain
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.HelpCommandProcessor
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.SettingsCommandProcessor
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.StartCommandProcessor
@@ -18,23 +19,42 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 class BotModule: AbstractModule() {
 
     override fun configure() {
-        newSetBinder(binder(), UpdateProcessor::class.java).apply {
+        newSetBinder(binder(), UpdateProcessorChain::class.java).apply {
             addBinding().to(HelpCommandProcessor::class.java)
             addBinding().to(SettingsCommandProcessor::class.java)
             addBinding().to(StartCommandProcessor::class.java)
+            addBinding().to(StateChangeProcessor::class.java)
         }
     }
 
     @Provides
     @Singleton
-    fun stateManager(): StateManager = StateManager()
+    @ConfiguredProcessorChainHead
+    fun updateProcessorChain(
+        processors: Set<UpdateProcessorChain>
+    ): UpdateProcessorChain {
+        val head: UpdateProcessorChain = processors.first()
+        var previous: UpdateProcessorChain? = null
+
+        for (processor in processors) {
+            previous?.next = processor
+            previous = processor
+        }
+        return head
+    }
+
+    @Provides
+    @Singleton
+    fun stateManager(
+        @ApplicationProperties properties: Properties
+    ): StateManager = StateManager(properties)
 
     @Provides
     @Singleton
     fun dodsterBot(
-        processors: Set<UpdateProcessor>,
+        @ConfiguredProcessorChainHead processorsChain: UpdateProcessorChain,
         @ApplicationProperties properties: Properties
-    ): TelegramLongPollingBot = DodsterBot(processors, properties)
+    ): TelegramLongPollingBot = DodsterBot(processorsChain, properties)
 
     @Provides
     @Singleton

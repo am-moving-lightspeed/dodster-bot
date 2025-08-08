@@ -13,6 +13,10 @@ val BOT_COMMANDS_NAMES = listOf(
     HELP_CMD_NAME, SETTINGS_CMD_NAME, START_CMD_NAME
 )
 
+// Bot state options
+const val MEDIA_MGMT_OPT = "media-management"
+const val MONITOR_CHAT_OPT = "monitor-chat"
+
 // Common
 const val APPLICATION_PROPERTIES_FILE = "application.properties"
 
@@ -20,6 +24,8 @@ const val APPLICATION_PROPERTIES_FILE = "application.properties"
 const val BOT_PROP_PREFIX = "bot"
 const val BOT_CMD_DESCRIPTION_PREFIX = "$BOT_PROP_PREFIX.command.description"
 const val BOT_CMD_RESPONSE_PREFIX = "$BOT_PROP_PREFIX.command.response"
+const val BOT_STATE_MESSAGE_PREFIX = "$BOT_PROP_PREFIX.state.message"
+const val BOT_STATE_OPTION_TPL = "$BOT_PROP_PREFIX.state.%s.option.%s"
 
 const val BOT_NAME_PROP = "$BOT_PROP_PREFIX.name"
 const val BOT_TOKEN_PROP = "$BOT_PROP_PREFIX.token"
