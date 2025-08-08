@@ -5,7 +5,7 @@ import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.HelpCo
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.SettingsCommandProcessor
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.message.command.StartCommandProcessor
 import com.github.am_moving_lightspeed.tg.bot.dodster.bot.state.StateManager
-import com.github.am_moving_lightspeed.tg.bot.dodster.config.BotProperties
+import com.github.am_moving_lightspeed.tg.bot.dodster.config.ApplicationProperties
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.multibindings.Multibinder.newSetBinder
@@ -33,7 +33,7 @@ class BotModule: AbstractModule() {
     @Singleton
     fun dodsterBot(
         processors: Set<UpdateProcessor>,
-        @BotProperties properties: Properties
+        @ApplicationProperties properties: Properties
     ): TelegramLongPollingBot = DodsterBot(processors, properties)
 
     @Provides

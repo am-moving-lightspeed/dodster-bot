@@ -9,4 +9,4 @@ import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 @Retention(RUNTIME)
 @Target(FIELD, FUNCTION, VALUE_PARAMETER)
 @Qualifier
-annotation class BotProperties
+annotation class ApplicationProperties

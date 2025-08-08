@@ -1,7 +1,6 @@
 package com.github.am_moving_lightspeed.tg.bot.dodster.config
 
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.APPLICATION_PROPERTIES_FILE
-import com.github.am_moving_lightspeed.tg.bot.dodster.util.BOT_PROP_PREFIX
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.DASH
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.EQ
 import com.github.am_moving_lightspeed.tg.bot.dodster.util.second
@@ -15,12 +14,10 @@ import kotlin.text.Charsets.UTF_8
 class ApplicationPropertiesModule(private val programArgs: Array<String>): AbstractModule() {
 
     override fun configure() {
-        val applicationProperties = prepareApplicationProperties(programArgs).also {
+        prepareApplicationProperties(programArgs).also {
             bindProperties(binder(), it)
-        }
-        extractBotProperties(applicationProperties).also {
             bind(Properties::class.java)
-                .annotatedWith(BotProperties::class.java)
+                .annotatedWith(ApplicationProperties::class.java)
                 .toInstance(it)
         }
     }
@@ -41,15 +38,4 @@ class ApplicationPropertiesModule(private val programArgs: Array<String>): Abstr
             ?: throw IllegalStateException("Application properties file not found")
         return InputStreamReader(inputStream, UTF_8)
     }
-
-    private fun extractBotProperties(applicationProperties: Properties): Properties =
-        Properties().apply {
-            applicationProperties
-                .filterKeys {
-                    (it as String).startsWith(BOT_PROP_PREFIX)
-                }
-                .forEach {
-                    setProperty(it.key as String, it.value as String)
-                }
-        }
 }
